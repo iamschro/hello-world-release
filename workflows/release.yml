@@ -1,10 +1,4 @@
-
----
-
-### 📄 `.github/workflows/release.yml`
-
-```yaml
-name: Build and Release
+name: Build EXE and Release
 
 on:
   push:
@@ -12,8 +6,8 @@ on:
       - 'v*.*.*'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-windows:
+    runs-on: windows-latest
 
     steps:
       - name: Checkout
@@ -24,13 +18,15 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Build Package
-        run: |
-          python setup.py sdist
+      - name: Install dependencies
+        run: pip install pyinstaller
 
-      - name: Upload Release
+      - name: Build EXE
+        run: pyinstaller --onefile hello.py
+
+      - name: Upload EXE to Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/*
+          files: dist/hello.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
